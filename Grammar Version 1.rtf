@@ -1,0 +1,54 @@
+
+
+program ::= statement_set
+statement_set  ::=  statement statement_set |  statement
+variable ::=  variable character |  character
+character ::= ‘a’ | ‘b’ | ‘c’ | . . . | ‘z’
+
+statement ::=  assignment |  if_statement |  while_statement
+assignment ::=  datatype variable ‘=’  expression
+if_statement ::= ‘if’ expression ‘start’ statement_set ‘end’ | if’ expression ‘start’ statement_set ‘else’ statement_set ‘end’ 
+while_statement ::= ‘while’ expression ‘do’  statement_set ‘od’
+datatype ::= ‘int’
+
+expression ::= constant | operation
+operation ::=  Operand Operator Operand
+Operator ::= +|-|/|*|>|>=|<|<=|==|%
+Operand ::= constant | variable
+constant ::= ‘0’ | ‘1’ | ‘2’ | ‘3’ | ‘4’ | ‘5’ | ‘6’ | ‘7’ | ‘8’ | ‘9’
+
+‘0’ ::= 0
+‘1’ ::= 1
+‘2’ ::= 2
+‘3’ ::= 3
+‘4’ ::= 4
+‘5’ ::= 5
+‘6’ ::= 6
+‘7’ ::= 7
+‘8’ ::= 8
+‘9’ ::= 9
+
+constant ‘0’ ::= 10 *  constant + 0
+constant ‘1’ ::= 10 *  constant + 1
+constant ‘2’ ::= 10 *  constant + 2
+constant ‘3’ ::= 10 *  constant + 3
+constant ‘4’ ::= 10 *  constant + 4
+constant ‘5’ ::= 10 *  constant + 5
+constant ‘6’ ::= 10 *  constant + 6
+constant ‘7’ ::= 10 *  constant + 7
+constant ‘8’ ::= 10 *  constant + 8
+constant ‘9’ ::= 10 *  constant + 9
+
+
+Sample Program:
+
+int Sum = 0
+int i = 0
+while(i<=20)
+do
+	if(i%2==0)
+	start
+		sum = sum + i
+	end
+od
+
