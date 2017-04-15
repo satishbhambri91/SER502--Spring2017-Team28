@@ -1,0 +1,26 @@
+Team28
+In our team, every member takes part in the discussions and decision-making on every single stage of our project.
+Not only we are willing to offer help to each other, but we also try to use any available knowledge resources to
+do the seperate work assigned.
+
+
+Name:Jiuxu Chen
+ID:1211669885
+
+Future Plan: 
+Translate the EBNF to the format of Antlr4.7 in Eclipse Neon in order to yield the parse-tree and validate it.
+
+Contribution So Far: 
+1.Installed Antlr4.7 in Eclipse and successfully configured it.
+2.Wrote small Java application to make sure the whole Antlr4.7 process goes perfectly by using sample grammar from website.
+3.Help Prashanth to write the documents for the submission of milestone2.
+4.Help Prashanth to re-check the EBNF grammar.
+
+Name:XXXXX
+ID:XXXXX
+
+Future Plan:
+XXXXXXXXXXX
+
+Contribution So Far:
+XXXXXXXXX
