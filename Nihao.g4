@@ -1,0 +1,32 @@
+grammar Hello;
+
+r : statement_set;
+statement_set:statement (statement|statement_set);
+CHAR : [a-zA-Z];
+variable : VARIABLE;
+If: 'if';
+While:'while';
+Start:'start';
+Else:'else';
+End:'end';
+Do:'do';
+Od:'od';
+LPAREN:'(';
+RPAREN:')';
+VARIABLE: CHAR(CHAR)+;
+CONSTANT : ('0'..'9')+;
+number: (CONSTANT)+;
+integer: number ',' number;
+bool: 'true' | 'false';
+WS : [ \t\r\n]+ -> skip ;
+
+statement : assignment|if_statement|while_statement;
+assignment :  datatype variable '=' expression statement | variable '=' expression;
+if_statement : If LPAREN expression RPAREN Start statement_set End Else statement_set End ;
+while_statement : While LPAREN expression RPAREN Do  statement_set Od;
+datatype: 'int' | 'bool';	
+expression : number | operation |  bool | integer;
+operation :  exp (('>'|'>='|'<'|'<='|'==')exp);
+exp: term('+'term|'-'term)*;
+term: factor('*'factor|'/'factor|'%'factor)*;
+factor: CONSTANT | VARIABLE|LPAREN operation RPAREN;
