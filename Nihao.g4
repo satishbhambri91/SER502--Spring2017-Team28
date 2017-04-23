@@ -1,8 +1,7 @@
-grammar Hello;
+grammar Nihao;
 
 r : statement_set;
 statement_set:statement (statement|statement_set);
-CHAR : [a-zA-Z];
 variable : VARIABLE;
 If: 'if';
 While:'while';
@@ -13,10 +12,9 @@ Do:'do';
 Od:'od';
 LPAREN:'(';
 RPAREN:')';
-VARIABLE: CHAR(CHAR)+;
+VARIABLE: [A-Za-z_][A-Za-z0-9_]*;
 CONSTANT : ('0'..'9')+;
-number: (CONSTANT)+;
-integer: number ',' number;
+integer: (CONSTANT)+;
 bool: 'true' | 'false';
 WS : [ \t\r\n]+ -> skip ;
 
@@ -24,8 +22,8 @@ statement : assignment|if_statement|while_statement;
 assignment :  datatype variable '=' expression statement | variable '=' expression;
 if_statement : If LPAREN expression RPAREN Start statement_set End Else statement_set End ;
 while_statement : While LPAREN expression RPAREN Do  statement_set Od;
-datatype: 'int' | 'bool';	
-expression : number | operation |  bool | integer;
+datatype: 'int' | 'bool';
+expression : integer | operation |  bool;
 operation :  exp (('>'|'>='|'<'|'<='|'==')exp);
 exp: term('+'term|'-'term)*;
 term: factor('*'factor|'/'factor|'%'factor)*;
