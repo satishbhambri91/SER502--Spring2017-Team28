@@ -1,0 +1,122 @@
+import operator
+import os
+import re
+import sys
+
+#Assigning meaning to the operators.
+operations = {"+" : operator.add(),
+              "-" : operator.sub(),
+              "*" : operator.mul(),
+              "/" : operator.div(),
+              ">" : operator.gt(),
+              "<" :operator.lt(),
+              ">=": operator.ge(),
+              "<=": operator.le(),
+              "==": operator.eq()}
+
+
+Operator = 'Operator'
+Constant = 'Constant'
+Boolean = 'Boolean'
+Variable = 'Variable'
+WhileTag = 'WhileTag'
+IfTag = 'IfTag'
+PUSH = 'PUSH'
+POP = 'POP'
+ASSIGN = 'ASSIGN'
+IfTrue = 'IfTrue'
+IfFalse = 'IfFalse'
+
+
+
+# Defines a list containing a set of set of tuples which hold the (symbol,tag)
+token_tags = [ (r'>' , Operator),
+               (r'<' , Operator),
+               (r'<=', Operator),
+               (r'>=', Operator),
+               (r'==', Operator),
+               (r'+', Operator),
+               (r'-', Operator),
+               (r'*', Operator),
+               (r'/', Operator),
+               (r'True', Boolean),
+               (r'False', Boolean),
+               (r'[0-9]+', Constant),
+               (r'[A-Za - z_][A-Za - z0 - 9_] *', Variable)
+               (r'do', WhileTag),
+               (r'od', WhileTag),
+               (r'start', IfTag),
+               (r'end', IfTag),
+               (r'IfTrue', IfTrue),
+               (r'IfFalse', IfFalse)]
+
+
+#Takes the input token stream and token tags list as input, checks for the validity of the token using re.compile and match regex
+#generates a list, tokens = [(symbol,tag)]
+def lexer(token_stream,token_tags ):
+    tokens = []
+    position = 0
+    token_length = len(token_stream)
+    while position < token_length:
+        match = 0
+        for token_tag in token_tags:
+            character, tag = token_tag
+            reObject = re.compile(character)
+            match = reObject.match(token_stream, position)
+            if match and tag:
+                expression = match.group(0)
+                token = (expression,tag)
+                tokens.append(token)
+            if not match:
+                sys.stderr.write("Invalid character", token_stream[position])
+                sys.exit(None)
+            else:
+                position = match.end(0)
+    return tokens
+
+def RunTimeInterpreter(tokens):
+    index = 0
+    tag = 1
+    stack = []
+    SymbolTable = {}
+    tokens_length = len(tokens)
+
+    while index < tokens_length:
+        if tokens[index][tag] == PUSH:
+            index = index + 1
+            if tokens[index][tag] == Constant:
+                key = int(tokens[index][0])
+            else:
+                key = tokens[index][0]
+            stack.append(key)
+
+            if tokens[index][tag] == Variable:
+                if Variable not in SymbolTable:
+                    SymbolTable[Variable] = None
+
+
+
+        if tokens[index][tag] == ASSIGN:
+            key = stack.pop()
+            Value = stack.pop()
+            stack.append(key)
+            SymbolTable[key] = Value
+
+
+    if tokens[index][tag] == Operator:
+        operand1 = str(stack.pop())
+        operand2 = str(stack.pop())
+
+
+        if lexer(operand1, token_tags)[index][tag] == Variable and lexer(operand2, token_tags) == Variable:
+            operand1 = SymbolTable[operand1]
+            operand2 = SymbolTable[operand2]
+
+            operation = operations[tokens[index][tag]]
+            stack.append(operation(operand1,operand2))
+
+
+        elif lexer(operand1, token_tags)[index][tag] == Constant and lexer(operand2, token_tags) == Constant:
+
+            operation = operations[tokens[index][0]]
+            stack.append(operation(operand1,operand2))
