@@ -120,3 +120,24 @@ def RunTimeInterpreter(tokens):
 
             operation = operations[tokens[index][0]]
             stack.append(operation(operand1,operand2))
+            
+            
+            if tokens[index][tag] == IfTrue:
+            TokenList = []
+            value = stack.pop()
+            index = index + 1
+            key = tokens[index][0]
+
+            ConditionCheck[key] = value # Shouldnt it be ConditionCheck[1] ? Key is going to be null, so it will give an error
+
+            if value == True:
+                while tokens[index][0] != "End":
+                    TokenList.append(tokens[index])
+                    index = index + 1
+
+                    RunTimeInterpreter(tokens)
+                    stack.append(value)
+            else:
+                stack.append(False)
+                while tokens[index][0] != "End":
+                    index = index + 1
