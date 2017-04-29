@@ -155,26 +155,26 @@ public class NihaoWalker extends NihaoBaseListener {
         for (int i = str.length() - 1; i >= 0; i--) {
             char ch = str.charAt(i);
             if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-                list.add(String.valueOf(ch));
+                sb.append(String.valueOf(ch)+'\n');
             }
             if (ch == '=') {
                 i--;
                 if (str.charAt(i) == '=') {
-                    list.add("==");
+                    sb.append("=="+'\n');
                 }
                 if (str.charAt(i) == '>') {
-                    list.add(">=");
+                    sb.append(">="+'\n');
                 }
                 if (str.charAt(i) == '<') {
-                    list.add("<=");
+                    sb.append("<="+'\n');
                 }
 
             }
             if (ch == '>') {
-                list.add(">");
+                sb.append(">"+'\n');
             }
             if (ch == '<') {
-                list.add("<");
+                sb.append("<"+'\n');
             }
         }
 
@@ -190,29 +190,6 @@ public class NihaoWalker extends NihaoBaseListener {
                 sb.append("PUSH " + str + '\n');
             }
         }
-        for (int i = list.size() - 1; i >= 0; i--) {
-            String str2 = list.get(i);
-            if (str2.compareTo("+") == 0) {
-                sb.append("ADD OPERATOR" + '\n');
-            } else if (str2.compareTo("-") == 0) {
-                sb.append("SUBS OPERATOR" + '\n');
-            } else if (str2.compareTo("*") == 0) {
-                sb.append("MULT OPERATOR" + '\n');
-            } else if (str2.compareTo("/") == 0) {
-                sb.append("DIV OPERATOR" + '\n');
-            } else if (str2.compareTo("==") == 0) {
-                sb.append("Equality OPERATOR" + '\n');
-            } else if (str2.compareTo(">=") == 0) {
-                sb.append("LargerEqual OPERATOR" + '\n');
-            } else if (str2.compareTo("<=") == 0) {
-                sb.append("LessEqual OPERATOR" + '\n');
-            } else if (str2.compareTo(">") == 0) {
-                sb.append("Larger OPERATOR" + '\n');
-            } else if (str2.compareTo("<") == 0) {
-                sb.append("Less OPERATOR" + '\n');
-            }
-        }
-        list.clear();
     }
 
     @Override
