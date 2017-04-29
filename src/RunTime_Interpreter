@@ -84,17 +84,16 @@ def RunTimeInterpreter(tokens):
     while index < tokens_length:
         if tokens[index][tag] == PUSH:
             index = index + 1
-            if tokens[index][tag] == Constant:
+            if tokens[index][tag] == CONSTANT:
                 key = int(tokens[index][0])
             else:
                 key = tokens[index][0]
             stack.append(key)
 
-            if tokens[index][tag] == Variable:
-                if Variable not in SymbolTable:
-                    SymbolTable[Variable] = None
-
-
+            if tokens[index][tag] == VARIABLE:
+                if key not in SymbolTable:
+                    SymbolTable[key] = None
+        print stack
 
         if tokens[index][tag] == ASSIGN:
             key = stack.pop()
@@ -103,41 +102,63 @@ def RunTimeInterpreter(tokens):
             SymbolTable[key] = Value
 
 
-    if tokens[index][tag] == Operator:
-        operand1 = str(stack.pop())
-        operand2 = str(stack.pop())
+        if tokens[index][tag] == OPERATOR:
+            operand1 = str(stack.pop())
+            operand2 = str(stack.pop())
 
-
-        if lexer(operand1, token_tags)[index][tag] == Variable and lexer(operand2, token_tags) == Variable:
-            operand1 = SymbolTable[operand1]
-            operand2 = SymbolTable[operand2]
-
-            operation = operations[tokens[index][tag]]
-            stack.append(operation(operand1,operand2))
-
-
-        elif lexer(operand1, token_tags)[index][tag] == Constant and lexer(operand2, token_tags) == Constant:
+            if lexer(str(operand1), token_tags)[0][tag] == VARIABLE and lexer(str(operand2), token_tags)[0][tag] == VARIABLE:
+                operand1 = SymbolTable[operand1]
+                operand2 = SymbolTable[operand2]
 
             operation = operations[tokens[index][0]]
-            stack.append(operation(operand1,operand2))
-            
-            
-            if tokens[index][tag] == IfTrue:
-            TokenList = []
-            value = stack.pop()
-            index = index + 1
-            key = tokens[index][0]
+            stack.append(operation(operand1, operand2))
 
-            ConditionCheck[key] = value # Shouldnt it be ConditionCheck[1] ? Key is going to be null, so it will give an error
+        # print "=======SYST"
+        # print SymbolTable
+        # print "======STACK"
+        # result = stack.pop()
+        # print "sum is " + str(result)
 
-            if value == True:
-                while tokens[index][0] != "End":
-                    TokenList.append(tokens[index])
-                    index = index + 1
 
-                    RunTimeInterpreter(tokens)
-                    stack.append(value)
-            else:
-                stack.append(False)
-                while tokens[index][0] != "End":
-                    index = index + 1
+
+
+        if tokens[index][tag] == PRINT:
+            variable = stack[0]
+            lol = str(variable)
+            for key in SymbolTable:
+                if key is lol:
+                    print "SUM OF NOS IS"
+                    print SymbolTable[key]
+
+    
+        index = index+1
+
+
+    # print "====Symbol Table========="
+    # print  symbolTable
+    # print "===Stack====="
+    # print STACK
+
+
+
+
+
+
+if __name__ == "__main__":
+
+    if len(sys.argv) <= 1:
+        print "Error! No file is given for reading"
+        sys.exit()
+
+    # read the file
+    with open(sys.argv[1] + ".sv.ic", "r") as myfile:
+        #f = open("myfile.txt", 'a')
+        token_stream = myfile.read()
+
+
+
+    # get the tokens from the lexer
+    tokens = lexer(token_stream, token_tags)
+
+
+    RunTimeInterpreter(tokens)
