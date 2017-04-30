@@ -3,8 +3,10 @@ import org.antlr.v4.runtime.tree.*;
 public class NihaoMain {
 
 	public static void main(String[] args) {
-		 String stringcode="int a = 22 int c = 0 bool d = true while(d) do  cc = (12+4)*2 od";
-	     ANTLRInputStream input = new ANTLRInputStream( stringcode);
+ 	     String strtoking = "/Users/prashanth/Desktop/NihaoFinal/src/sample1";
+             File f = new File(strtoking);
+             InputStreamReader read = new InputStreamReader(new FileInputStream(f));
+	     ANTLRInputStream input = new ANTLRInputStream(read);
 
 	     NihaoLexer lexer = new NihaoLexer(input);
 
