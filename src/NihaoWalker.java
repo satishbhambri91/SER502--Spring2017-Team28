@@ -3,13 +3,14 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.PrintWriter;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * This class provides an empty implementation of {@link HelloListener}, which
+ * This class provides an empty implementation of, which
  * can be extended to create a listener which only needs to handle a subset of
  * the available methods.
  */
@@ -25,8 +26,16 @@ public class NihaoWalker extends NihaoBaseListener {
 
     @Override
     public void exitR(NihaoParser.RContext ctx) {
+        try {
+            PrintWriter writer = new PrintWriter("/Users/prashanth/Desktop/NihaoFinal/src/sample1.sv.ic","UTF-8");
+            writer.write(sb.toString());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(sb.toString());
     }
+
 
 
     @Override
@@ -65,6 +74,7 @@ public class NihaoWalker extends NihaoBaseListener {
 
     @Override
     public void exitBool(NihaoParser.BoolContext ctx) {
+
     }
 
 
@@ -78,6 +88,24 @@ public class NihaoWalker extends NihaoBaseListener {
     }
 
 
+
+    @Override public void enterPrint_statement(NihaoParser.Print_statementContext ctx) {
+
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitPrint_statement(NihaoParser.Print_statementContext ctx) {
+        sb.append("PRINT"+'\n');
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+
     @Override
     public void enterDatatype_assignment(NihaoParser.Datatype_assignmentContext ctx) {
     }
@@ -90,35 +118,45 @@ public class NihaoWalker extends NihaoBaseListener {
     }
 
 
+    @Override public void enterIfelse_statement(NihaoParser.Ifelse_statementContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitIfelse_statement(NihaoParser.Ifelse_statementContext ctx) { }
+
     @Override
     public void enterIf_statement(NihaoParser.If_statementContext ctx) {
         sb.append("IFCONDITION"+'\n');
+
     }
 
 
     @Override
     public void exitIf_statement(NihaoParser.If_statementContext ctx) {
-        sb.append("ENDIF"+'\n');
+        sb.append("END"+'\n');
     }
 
 
     @Override public void enterElse_statement(NihaoParser.Else_statementContext ctx) {
         sb.append("ELSECONDITION"+'\n');
+        sb.append("START"+'\n');
     }
 
     @Override public void exitElse_statement(NihaoParser.Else_statementContext ctx) {
-        sb.append("ENDELSE"+'\n');
+        sb.append("END"+'\n');
     }
 
     @Override
     public void enterWhile_statement(NihaoParser.While_statementContext ctx) {
-        sb.append("START_WHILE"+'\n');
+        sb.append("WHILE"+'\n');
     }
 
 
     @Override
     public void exitWhile_statement(NihaoParser.While_statementContext ctx) {
-        sb.append("END_WHILE"+'\n');
+        sb.append("OD"+'\n');
     }
 
 
@@ -131,6 +169,29 @@ public class NihaoWalker extends NihaoBaseListener {
     public void exitDatatype(NihaoParser.DatatypeContext ctx) {
     }
 
+    @Override public void enterExpression_if(NihaoParser.Expression_ifContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitExpression_if(NihaoParser.Expression_ifContext ctx) {
+        sb.append("START"+'\n');
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterExpression_while(NihaoParser.Expression_whileContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitExpression_while(NihaoParser.Expression_whileContext ctx) {
+        sb.append("DO"+'\n');
+    }
 
     @Override
     public void enterExpression(NihaoParser.ExpressionContext ctx) {
@@ -146,6 +207,7 @@ public class NihaoWalker extends NihaoBaseListener {
 
     @Override
     public void exitExpression(NihaoParser.ExpressionContext ctx) {
+
     }
 
 
@@ -155,42 +217,66 @@ public class NihaoWalker extends NihaoBaseListener {
         for (int i = str.length() - 1; i >= 0; i--) {
             char ch = str.charAt(i);
             if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-                sb.append(String.valueOf(ch)+'\n');
+                list.add(String.valueOf(ch));
             }
             if (ch == '=') {
                 i--;
                 if (str.charAt(i) == '=') {
-                    sb.append("=="+'\n');
+                    list.add("==");
                 }
                 if (str.charAt(i) == '>') {
-                    sb.append(">="+'\n');
+                    list.add(">=");
                 }
                 if (str.charAt(i) == '<') {
-                    sb.append("<="+'\n');
+                    list.add("<=");
                 }
 
             }
             if (ch == '>') {
-                sb.append(">"+'\n');
+                list.add(">");
             }
             if (ch == '<') {
-                sb.append("<"+'\n');
+                list.add("<");
             }
         }
-
     }
 
     @Override
     public void exitOperation(NihaoParser.OperationContext ctx) {
         for (int i = list.size() - 1; i >= 0; i--) {
             String str = list.get(i);
+
             if (str.compareTo("+") != 0 && str.compareTo("-") != 0 && str.compareTo("*") != 0 && str.compareTo("/") != 0
                     && str.compareTo("==") != 0 && str.compareTo(">=") != 0 && str.compareTo("<=") != 0
                     && str.compareTo(">") != 0 && str.compareTo("<") != 0) {
                 sb.append("PUSH " + str + '\n');
             }
         }
+        for (int i = list.size() - 1; i >= 0; i--) {
+            String str2 = list.get(i);
+            if (str2.compareTo("+") == 0) {
+                sb.append("+" + '\n');
+            } else if (str2.compareTo("-") == 0) {
+                sb.append("-" + '\n');
+            } else if (str2.compareTo("*") == 0) {
+                sb.append("*" + '\n');
+            } else if (str2.compareTo("/") == 0) {
+                sb.append("/" + '\n');
+            } else if (str2.compareTo("==") == 0) {
+                sb.append("==" + '\n');
+            } else if (str2.compareTo(">=") == 0) {
+                sb.append(">=" + '\n');
+            } else if (str2.compareTo("<=") == 0) {
+                sb.append("<=" + '\n');
+            } else if (str2.compareTo(">") == 0) {
+                sb.append(">" + '\n');
+            } else if (str2.compareTo("<") == 0) {
+                sb.append("<" + '\n');
+            }
+        }
+        list.clear();
     }
+
 
     @Override
     public void enterExp(NihaoParser.ExpContext ctx) {
@@ -222,6 +308,7 @@ public class NihaoWalker extends NihaoBaseListener {
 
     @Override
     public void exitFactor(NihaoParser.FactorContext ctx) {
+
     }
 
 
