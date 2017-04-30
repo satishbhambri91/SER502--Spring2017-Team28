@@ -1,0 +1,321 @@
+import sys
+import operator
+import re
+
+
+sys.setrecursionlimit(50);
+
+# module to pass an operator
+
+operations = {"+": operator.add,
+            "-": operator.sub,
+       "*": operator.mul,
+       "/": operator.div,
+       ">": operator.gt,
+       "<": operator.lt,
+       ">=": operator.ge,
+       "<=": operator.le,
+       "==": operator.eq,
+       "!=": operator.ne,
+       }
+
+# tokens of lexer
+OPERATOR = 'OPERATOR'
+CONSTANT = 'CONSTANT'
+VARIABLE = 'VARIABLE'
+PUSH = 'PUSH'
+ASSIGN = 'ASSIGN'
+IFCONDITION = 'IFCONDITION'
+START = 'START'
+END = 'END'
+ENDIF = 'ENDIF'
+ELSECONDITION = 'ELSECONDITION'
+ENDELSE = 'ENDELSE'
+BOOLEAN = 'BOOLEAN'
+CONDITION  = 'CONDITION'
+PRINT = 'PRINT'
+WHILE = 'WHILE'
+DO = 'DO'
+OD = 'OD'
+
+token_tags = [
+    (r'[ \n\t]+',                   None),
+    (r'//.*',                       None),
+    (r'\+',                         OPERATOR),
+    (r'-',                          OPERATOR),
+    (r'\*',                         OPERATOR),
+    (r'/',                          OPERATOR),
+    (r'<=',                         OPERATOR),
+    (r'<',                          OPERATOR),
+    (r'>=',                         OPERATOR),
+    (r'>',                          OPERATOR),
+    (r'!=',                         OPERATOR),
+    (r'==',                         OPERATOR),
+    (r'TRUE',                       BOOLEAN),
+    (r'FALSE',                      BOOLEAN),
+    (r'ENDELSE',                    ENDELSE),
+    (r'ELSECONDITION',         ELSECONDITION),
+    (r'WHILE',                         WHILE),
+    (r'DO',                                DO),
+    (r'OD',                                OD),
+    (r'START',                       START),
+    (r'ENDIF',                        ENDIF),
+    (r'END',                           END),
+    (r'IFCONDITION',             IFCONDITION),
+    (r'POP',                        POP),
+    (r'PUSH',                       PUSH),
+    (r'PRINT',                       PRINT),
+    (r'ASSIGN',                     ASSIGN),
+    (r'[0-9]+',                     CONSTANT),
+    (r'[A-Za-z_][A-Za-z0-9_]*',     VARIABLE),
+    (r'\"(\\.|[^\"])*\"',           STRING),
+
+]
+
+
+def lexer(token_stream, token_tags):
+    position = 0
+    tokens = []
+    while position < len(token_stream):
+        match = None
+        for token_tag in token_tags:
+            character, tag = token_tag
+            regex = re.compile(character)
+            match = regex.match(token_stream, position)
+            if match:
+                expression = match.group(0)
+                if tag:
+                    token = (expression, tag)
+                    tokens.append(token)
+                break
+        if not match:
+            sys.stderr.write('Illegal character: %s\\n' % token_stream[position])
+            sys.exit(1)
+        else:
+            position = match.end(0)
+    return tokens
+
+def RunTimeInterpreter(tokens, SymbolTable, stack):
+    index = 0
+    tag = 1
+    ConditionCheck = {}
+
+    while index < len(tokens):
+        if tokens[index][tag] == PUSH:
+            index = index + 1
+            if tokens[index][tag] == CONSTANT:
+                key = int(tokens[index][0])
+            else:
+                key = tokens[index][0]
+            stack.append(key)
+
+            if tokens[index][tag] == VARIABLE:
+                if key not in SymbolTable:
+                    SymbolTable[key] = None
+                if key in SymbolTable:
+                    print "hello"
+
+        # print stack
+        print "======SYMBOL TABLE======"
+        print SymbolTable
+        if tokens[index][tag] == ASSIGN:
+            key = stack.pop()
+            Value = stack.pop()
+            stack.append(key)
+            print "Updated value in dictionary"
+            SymbolTable[key] = Value
+
+
+        if tokens[index][tag] == OPERATOR:
+            print "calculating"
+            operand1 = str(stack.pop())
+            operand2 = str(stack.pop())
+
+            if lexer(str(operand1), token_tags)[0][tag] == VARIABLE and lexer(str(operand2), token_tags)[0][tag] == VARIABLE:
+                operand1 = SymbolTable[operand1]
+                operand2 = SymbolTable[operand2]
+
+            elif lexer(str(operand1), token_tags)[0][tag] == VARIABLE and lexer(str(operand2), token_tags)[0][tag] == CONSTANT:
+                operand1 = SymbolTable[operand1]
+
+            elif lexer(str(operand1), token_tags)[0][tag] == CONSTANT and lexer(str(operand2), token_tags)[0][tag] == VARIABLE:
+                operand2 = SymbolTable[operand2]
+
+            # print "Operands ========"
+            # print operand1
+            # print operand2
+
+            operation = operations[tokens[index][0]]
+            calculated = operation(int(operand1), int(operand2))
+            stack.append(str(calculated))
+
+
+
+        # print "=======SYST"
+        # print SymbolTable
+        # print "======STACK"
+        # result = stack.pop()
+        # print "sum is " + str(result)
+
+
+
+
+        if tokens[index][tag] == PRINT:
+            variable = stack.pop()
+            lol = str(variable)
+            for key in SymbolTable:
+                if key is lol:
+                    print "Nihao output"
+                    print SymbolTable[key]
+
+        if tokens[index][tag] == IFCONDITION:
+            index = index + 1
+            if tokens[index][tag] == PUSH:
+                index = index + 1
+                ifoper1 = tokens[index][0]
+                stack.append(ifoper1)
+                print "===operand1==="
+                print ifoper1
+                index = index + 2
+                ifoper2 = str(tokens[index][0])
+                # print "===operand2==="
+                # print ifoper2
+                for key in SymbolTable:
+                    value11 = None
+                    if key is ifoper2:
+                        value11 = SymbolTable[key]
+                        stack.append(value11)
+                print"=========MC========"
+                print stack
+                compval1 = str(stack.pop())
+                compval2 = str(stack.pop())
+                index = index + 1
+                operation_if = operations[tokens[index][0]]
+                # print "===operation====="
+                # print operation_if
+                ifexpval = operation_if(compval2, compval1)
+                # print "==ifexpvalue=="
+                # print ifexpval
+                stack.append(ifexpval)
+                print "=====Balle===="
+                print stack
+
+                index = index + 1
+                if ifexpval == True and tokens[index][tag] == START:
+                    TokenList = []
+                    index = index + 1
+
+
+                    while tokens[index][0] != END:
+                        TokenList.append(tokens[index])
+
+                        index = index + 1
+                    print "=====tokens====="
+                    print TokenList
+                    RunTimeInterpreter(TokenList,SymbolTable, stack)
+                    #stack.append(ifexpval)
+
+                else:
+                    while tokens[index][0] != END:
+                        index = index + 1
+                    print "Succssful hutias"
+
+        if tokens[index][tag] == ELSECONDITION:
+            index = index + 1
+            if ifexpval == False and tokens[index][tag] == START:
+                TokenList = []
+                index = index + 1
+
+                while tokens[index][0] != END:
+                    TokenList.append(tokens[index])
+                    index = index + 1
+                RunTimeInterpreter(TokenList, SymbolTable, stack)
+
+
+                # else:
+                #     stack.append(False)
+                #     while tokens[index][0] != END:
+                #         index = index + 1
+        if tokens[index][tag] == WHILE:
+            WhileTokenList = []
+            index = index + 1
+            if tokens[index][tag] == PUSH:
+                index = index + 1
+
+                whileoper1 = tokens[index][0]
+                stack.append(whileoper1)
+
+                print "===operand1==="
+                print whileoper1
+                index = index + 2
+
+                whileoper2 = str(tokens[index][0])
+                print "===operand2==="
+                print whileoper2
+
+                for key in SymbolTable:
+                    value112 = None
+                    if key is whileoper2:
+                        value112 = SymbolTable[key]
+                        stack.append(value112)
+                print "==== AA chako==="
+                print value112
+                print "======Lo JI Pesh hai Stack===="
+                print stack
+                whilecompval1 = str(stack.pop())
+                whilecompval2 = str(stack.pop())
+
+                print "whilecompval1"
+                print whilecompval1
+
+                print "whilecompval2"
+                print whilecompval2
+
+                index = index + 1
+                operation_while = operations[tokens[index][0]]
+
+                if (operation_while(whilecompval1, whilecompval2)) is True:
+                    index = index + 2
+                    while tokens[index][0] != OD:
+                        WhileTokenList.append(tokens[index])
+                        index = index + 1
+                    print WhileTokenList
+                    for i in range(int(whilecompval1),int(whilecompval2)+1):
+                        print "iteration" + str(i)
+                        print stack
+                        RunTimeInterpreter(WhileTokenList, SymbolTable, stack)
+
+
+        index = index+1
+
+
+    # print "====Symbol Table========="
+    # print  symbolTable
+    # print "===Stack====="
+    # print STACK
+
+
+
+
+
+
+
+if __name__ == "__main__":
+
+    if len(sys.argv) <= 1:
+        print "Error! No file is given for reading"
+        sys.exit()
+
+    # read the file
+    with open(sys.argv[1] + ".sv.ic", "r") as myfile:
+        #f = open("myfile.txt", 'a')
+        token_stream = myfile.read()
+
+    stack = []
+    SymbolTable = {}
+
+    # get the tokens from the lexer
+    tokens = lexer(token_stream, token_tags)
+    # print tokens
+
+    RunTimeInterpreter(tokens,SymbolTable, stack)
