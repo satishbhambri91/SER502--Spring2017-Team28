@@ -1,4 +1,8 @@
 // Generated from Hello.g4 by ANTLR 4.7
+@Author:  Prashanth Radhakrishnan
+Purpose : SER 502 Project, ARIZONA STATE UNIVERSITY
+Date: 29th April 2017
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
