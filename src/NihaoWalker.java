@@ -27,7 +27,7 @@ public class NihaoWalker extends NihaoBaseListener {
     @Override
     public void exitR(NihaoParser.RContext ctx) {
         try {
-            PrintWriter writer = new PrintWriter("/Users/prashanth/Desktop/NihaoFinal/src/sample1.sv.ic","UTF-8");
+            PrintWriter writer = new PrintWriter("ni.ic","UTF-8");
             writer.write(sb.toString());
             writer.close();
         } catch (Exception e) {
