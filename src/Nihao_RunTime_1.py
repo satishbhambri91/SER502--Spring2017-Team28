@@ -1,3 +1,7 @@
+@Author:  Prashanth Radhakrishnan
+Purpose : SER 502 Project, ARIZONA STATE UNIVERSITY
+Date: 29th April 2017
+
 import operator
 import os
 import re
