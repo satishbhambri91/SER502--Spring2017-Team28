@@ -3,9 +3,7 @@ import org.antlr.v4.runtime.tree.*;
 public class NihaoMain {
 
 	public static void main(String[] args) {
- 	     String strtoking = "/Users/prashanth/Desktop/NihaoFinal/src/sample1";
-             File f = new File(strtoking);
-             InputStreamReader read = new InputStreamReader(new FileInputStream(f));
+             InputStreamReader read = new InputStreamReader(args[1]);
 	     ANTLRInputStream input = new ANTLRInputStream(read);
 
 	     NihaoLexer lexer = new NihaoLexer(input);
