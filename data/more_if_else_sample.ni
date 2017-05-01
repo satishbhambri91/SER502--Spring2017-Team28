@@ -1,0 +1,11 @@
+a=2
+c=0
+if(a==10)
+start
+	d=10
+end
+if(a<10)
+start
+	d=20
+end
+print(d)
